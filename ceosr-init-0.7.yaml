@@ -1,0 +1,93 @@
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRoleBinding
+metadata:
+  name: ceos-rbac
+subjects:
+  - kind: ServiceAccount
+    # Reference to upper's `metadata.name`
+    name: default
+    # Reference to upper's `metadata.namespace`
+    namespace: default
+roleRef:
+  kind: ClusterRole
+  name: cluster-admin
+  apiGroup: rbac.authorization.k8s.io
+
+---
+
+# Configmap to add cluster wide custom config to all cEOS pods
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ceos-configmap
+  namespace: default
+data:
+  ceos-config-data: |
+    ntp server 172.22.22.50
+    management ssh
+    server-port 8022
+
+---
+
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: ceos-init
+spec:
+  selector:
+    matchLabels:
+      app: ceos
+  template:
+    metadata:
+      labels:
+        app: ceos
+    spec:
+      hostNetwork: true
+      initContainers:
+      - image: fredhsu/ceos-init:0.7
+        name: ceos-init
+        command: ["/ceos-init", "-cni=false"]
+        env:
+          - name: NODE_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: spec.nodeName
+          - name: NODE_AS
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.labels['asn']
+          - name: "BGP_AS"
+            value: "65130"
+          - name: "BGP_PEER"
+            value: "172.20.14.1"
+          - name: "CLOUDVISION_IP"
+            value: "10.90.224.175"
+        volumeMounts:
+        - name: kickstart-config
+          mountPath: /config/
+        - name: configmap-config-vol
+          mountPath: /config/ceos-configmap
+        imagePullPolicy: Always
+      containers:
+      - image: us.gcr.io/fred-hsu-veos/ceosr:0.7
+        name: ceos
+        command: ["/sbin/init", "systemd.setenv=EOS_PLATFORM=veos", "systemd.setenv=container=docker"]
+        stdin: true
+        tty: true
+        env:
+        - name: "EOS_PLATFORM"
+          value: "veos"
+        - name: "container"
+          value: "docker"
+        securityContext:
+          privileged: true
+        volumeMounts:
+        - mountPath: /mnt/flash/config
+          name: kickstart-config
+      volumes:
+      - name: kickstart-config
+        hostPath:
+          path: /opt/cni/ceos
+      - name: configmap-config-vol
+        configMap:
+          name: ceos-configmap
