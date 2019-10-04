@@ -18,7 +18,7 @@ cEOSr achieves these goals by the following:
 ## Supported Annotations for cEOS
 
 |Parameter | Description | Example |Optional|
-|----------|-------------|---------|
+|----------|-------------|---------|--------|
 |arista/bgp-peer-ip-1|IP address of BGP Peer | arista/bgp-peer-ip-1="172.20.3.1"|no|
 |arista/bgp-peer-ip-2|IP address of second BGP Peer for redundant links| arista/bgp-peer-ip-2="172.20.4.1"|yes|
 |arista/bgp-local-as |ASN for the Kubernetes nodes.  If using iBGP this should match the ToR| arista/bgp-local-as="65003"|no|
@@ -86,6 +86,6 @@ Entry for the volumes section:
         name: ceos-configmap
 
 ## Deployment Guide
-For a more in-depth deployment guide see : [DEPLOY.md]
+For a more in-depth deployment guide see : [DEPLOY.md](DEPLOY.md)
 ## Example Configuration
-For an example configuration see : [EXAMPLE.md]
+For an example configuration see : [EXAMPLE.md](EXAMPLE.md)
