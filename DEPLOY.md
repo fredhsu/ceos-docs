@@ -25,19 +25,14 @@ Download `ceosr-init-0.7.yaml`:
 
     curl https://storage.googleapis.com/ceos/ceosr-init-0.7.yaml -O
 
-Edit the following fields inside `ceosr-init-0.7.yaml` to insert your BGP AS, ToR IP address, and CV IP address.  Please be careful of indentation when dealing with YAML:
+Edit the following fields inside `ceosr-init-0.7.yaml` to insert your CV IP address.  Please be careful of indentation when dealing with YAML:
 
-    - name: "BGP_AS"
-      value: "65130"
-    - name: "BGP_PEER"
-      value: "172.20.14.1"
     - name: "CLOUDVISION_IP"
       value: "10.90.224.175"
 
-Alternatively if you leave the `BGP_AS` and `BGP_PEER` fields blank or remove them you can annotate the nodes via Kubernetes with `BGP_PEER=<PEER IP ADDRESS>` and `BGP_ASN=<ASN>` to provide BGP configuration information, this allows you to reuse the YAML across racks.
+Annotate the Kubernetes nodes with the BGP configuration relevant for the node:
 
-
-    kubectl annotate node k8snode BGP_PEER=172.20.14.1 BGP_ASN=65130
+    kubectl annotate node <k8snode> BGP_PEER=172.20.14.1 BGP_ASN=65130
 
 (optional) There are a number of optional parameters you can also specify via annotations:
 
