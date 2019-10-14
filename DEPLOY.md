@@ -113,3 +113,13 @@ Apply manifest:
 Currently ceos takes about 2 mins to boot, give it a bit of time before checking on it.  If all goes well you should see routes show up in the node's routing table, and you can `kubectl exec` into the pod to run commands.  For example:
 `kubectl exec -it <ceos podname> -- FastCli -p 15 -c "show version"`
 
+
+# Configuring the ToR
+It is convienent to use bgp dynamic peers for the ToR configuration so that new nodes can be dynamically added to the network without needing to change the switch config.  Since we are using iBGP here, you will need to configure the ToR as a route reflector:
+
+    router bgp 65003
+      bgp listen range 172.20.3.0/24 peer-group kubedemo1 remote-as 65003
+      neighbor kubedemo1 peer-group
+      neighbor kubedemo1 route-reflector-client
+      neighbor kubedemo1 maximum-routes 12000
+
