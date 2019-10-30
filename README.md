@@ -1,5 +1,15 @@
 # ceos-docs
-cEOSr is a containerized version of EOS, design to run as the network control plane in a Kubernetes cluster.  It can be deployed in parallel with other CNI providers, allowing different network security policy implementations to be used with the EOS network control plane.  In this release, cEOSr has been tested with the Calico CNI for policy, and is designed as a layer 3 solution, creating a BGP Peering relationship to the top of rack (ToR) switch.  
+CloudEOS-Container is a containerized version of EOS, design to run as the network control plane in a Kubernetes cluster.  It can be deployed in parallel with other CNI providers, allowing different network security policy implementations to be used with the EOS network control plane.  In this release, CloudEOS has been tested with the Calico CNI for policy, and is designed as a layer 3 solution, creating a BGP Peering relationship to the top of rack (ToR) switch.  
+
+## Supported versions
+CloudEOS has been tested with the following software versions:
+* Kubernetes 1.16
+* CentOS 7.6
+* Red Hat Enterprise Linux 7.6 
+* Ubuntu 16.04
+* Docker CE 18.09.6
+* Docker EE 
+
 ## Design Goals
 There are a few guiding design goals with cEOSr:
 * Provide a Kubernetes native deployment model
@@ -9,7 +19,7 @@ There are a few guiding design goals with cEOSr:
 
 cEOSr achieves these goals by the following:
 
-* Using a daemonset to deploy ceos containers on each node in the cluster
+* Using a daemonset to deploy CloudEOS containers on each node in the cluster
 * Providing configuration options directly in the deployment YAML file
 * Allowing standard EOS configuration 
 * Using the same binary as any other EOS based device
